@@ -4,8 +4,7 @@ import { verifyToken } from "../middleware/auth.js";
 
 const router = express.Router();
 
-router.post("/login", login);
-
 router.get("/is-admin", verifyToken, verifyAdmin);
+router.post("/login", login);
 
 export default router;

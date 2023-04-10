@@ -36,3 +36,14 @@ export const verifyAdmin = async (req, res) => {
     return res.status(401).json({ message: err.message, verified: false });
   }
 };
+
+export const resetPass = async (req, res) => {
+  const { email } = req.body;
+  const admin = await Admin.findOne({ email: email });
+
+  if (!admin) {
+    return res.status(404).json({ message: "Email invalido", verified: false });
+  }
+
+  return res.status(200).json({ email, verified: true });
+};

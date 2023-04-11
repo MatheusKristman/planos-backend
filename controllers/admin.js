@@ -5,6 +5,9 @@ import Admin from "../models/Admin.js";
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
+
+    console.log(req.body);
+
     const admin = await Admin.findOne({ email: email });
 
     if (!admin) {

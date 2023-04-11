@@ -9,6 +9,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import adminRoutes from "./routes/admin.js";
 import planRoutes from "./routes/plan.js";
+import leadRoutes from "./routes/lead.js";
 import { createPlan } from "./controllers/plan.js";
 
 // Config
@@ -41,11 +42,12 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // route with image
-app.post("/plan/create", upload.single("providerLogo"), createPlan);
+app.post("/plan/new", upload.single("providerLogo"), createPlan);
 
 // route without image
 app.use("/admin", multer().none(), adminRoutes);
 app.use("/plan", multer().none(), planRoutes);
+app.use("/lead", multer().none(), leadRoutes);
 
 // Mongoose Setup
 

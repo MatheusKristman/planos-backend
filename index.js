@@ -38,7 +38,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-app.use("/admin", adminRoutes);
+app.use("/admin", multer().none(), adminRoutes);
 
 // Mongoose Setup
 

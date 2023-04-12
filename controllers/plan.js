@@ -139,8 +139,6 @@ export const filterPlan = async (req, res) => {
             franchise: { $lt: franchise + 1 },
         });
 
-        console.log(plans[0].unlimitedApps.includes(unlimitedApps));
-
         const planFiltered = plans.filter((plan) => {
             if (
                 provider.includes(plan.provider) &&

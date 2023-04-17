@@ -56,7 +56,7 @@ const planScheme = new mongoose.Schema(
             default: 0,
         },
         createdAt: {
-            type: Date,
+            type: String,
             default: dayjs().format('DD/MM/YYYY'),
         },
         lines: {

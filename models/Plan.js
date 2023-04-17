@@ -12,7 +12,7 @@ const planScheme = new mongoose.Schema(
             required: true,
         },
         providerLogo: {
-            type: String,
+            type: Buffer,
             required: true,
         },
         title: {

@@ -137,6 +137,7 @@ export const filterPlan = async (req, res) => {
             lines,
             cost: { $lt: cost + 1 },
             franchise: { $lt: franchise + 1 },
+            archived: false,
         });
 
         const planFiltered = plans.filter((plan) => {

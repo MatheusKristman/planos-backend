@@ -1,6 +1,6 @@
-import mongoose from "mongoose";
+import { Schema, model } from "mongoose";
 
-const leadScheme = new mongoose.Schema({
+const leadScheme = new Schema({
   name: {
     type: String,
     required: true,
@@ -22,11 +22,11 @@ const leadScheme = new mongoose.Schema({
     required: true,
   },
   plan: {
-    type: String,
-    required: true,
+    type: Schema.Types.ObjectId,
+    ref: "CelPlan" || "InternetPlan" || "TelephonePlan",
   },
 });
 
-const Lead = mongoose.model("Lead", leadScheme);
+const Lead = model("Lead", leadScheme);
 
 export default Lead;

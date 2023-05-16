@@ -1,9 +1,12 @@
 import Lead from "../models/Lead.js";
-import Plan from "../models/Plan.js";
+import CelPlan from "../models/CelPlan.js";
+import InternetPlan from "../models/InternetPlan.js";
+import TelephonePlan from "../models/TelephonePlan.js";
 
 export const registerLead = async (req, res) => {
   try {
-    const { name, cpf, dateOfBirth, motherName, cel, planId } = req.body;
+    const { name, cpf, dateOfBirth, motherName, cel, planId, planType } =
+      req.body;
     const regName = /^[A-Za-z]+(?:\s+[A-Za-z]+)+$/;
 
     if (!regName.test(name)) {
@@ -27,14 +30,38 @@ export const registerLead = async (req, res) => {
       plan: planId,
     });
 
-    await Plan.findOneAndUpdate(
-      { _id: planId },
-      {
-        $inc: {
-          contacts: 1,
-        },
-      }
-    );
+    if (planType === "celPlan") {
+      await CelPlan.findOneAndUpdate(
+        { _id: planId },
+        {
+          $inc: {
+            contacts: 1,
+          },
+        }
+      );
+    }
+
+    if (planType === "internetPlan") {
+      await InternetPlan.findOneAndUpdate(
+        { _id: planId },
+        {
+          $inc: {
+            contacts: 1,
+          },
+        }
+      );
+    }
+
+    if (planType === "telephonePlan") {
+      await TelephonePlan.findOneAndUpdate(
+        { _id: planId },
+        {
+          $inc: {
+            contacts: 1,
+          },
+        }
+      );
+    }
 
     await newLead.save();
 

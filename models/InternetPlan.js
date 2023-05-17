@@ -15,11 +15,11 @@ const internetPlanSchema = new Schema({
     required: [true, "Valor do plano é obrigatório!"],
   },
   download: {
-    type: String,
+    type: Number,
     required: [true, "Download de velocidade do plano é obrigatório!"],
   },
   upload: {
-    type: String,
+    type: Number,
     required: [true, "Upload de velocidade do plano é obrigatório!"],
   },
   franchiseLimit: {

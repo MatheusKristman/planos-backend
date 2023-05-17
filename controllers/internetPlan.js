@@ -1,45 +1,43 @@
 import Provider from "../models/Provider.js";
-import CelPlan from "../models/CelPlan.js";
+import InternetPlan from "../models/InternetPlan.js";
 
 export const createPlan = async (req, res) => {
   const {
     providerId,
     title,
     cost,
-    period,
-    lines,
-    franchise,
-    unlimitedApps,
-    unlimitedCall,
-    planType,
+    download,
+    upload,
+    franchiseLimit,
+    tecnology,
+    hasWifi,
     priority,
     description,
   } = req.body;
 
   try {
-    const planAlreadyExists = await CelPlan.findOne({ title });
+    const planAlreadyExists = await InternetPlan.findOne({ title });
 
     if (planAlreadyExists) {
       return res.status(405).json({ message: "Plano já existe" });
     }
 
-    const newPlan = new CelPlan({
+    const newPlan = new InternetPlan({
       provider: providerId,
       title,
       cost,
-      period,
-      lines,
-      franchise,
-      unlimitedApps,
-      unlimitedCall,
-      planType,
+      download,
+      upload,
+      franchiseLimit,
+      tecnology,
+      hasWifi,
       priority,
       description,
     });
 
     await newPlan.save();
 
-    const plans = await CelPlan.find();
+    const plans = await InternetPlan.find();
 
     return res.status(200).json(plans);
   } catch (error) {
@@ -52,34 +50,32 @@ export const editPlan = async (req, res) => {
     id,
     title,
     cost,
-    period,
-    lines,
-    franchise,
-    unlimitedApps,
-    unlimitedCall,
-    planType,
+    download,
+    upload,
+    franchiseLimit,
+    tecnology,
+    hasWifi,
     priority,
     description,
   } = req.body;
 
   try {
-    await CelPlan.findOneAndUpdate(
+    await InternetPlan.findOneAndUpdate(
       { _id: id },
       {
         title,
         cost,
-        period,
-        lines,
-        franchise,
-        unlimitedApps,
-        unlimitedCall,
-        planType,
+        download,
+        upload,
+        franchiseLimit,
+        tecnology,
+        hasWifi,
         priority,
         description,
       }
     );
 
-    const plans = await CelPlan.find();
+    const plans = await InternetPlan.find();
 
     return res.status(200).json(plans);
   } catch (error) {
@@ -89,7 +85,7 @@ export const editPlan = async (req, res) => {
 
 export const getAllPlans = async (req, res) => {
   try {
-    const plans = await CelPlan.find();
+    const plans = await InternetPlan.find();
 
     return res.status(200).json(plans);
   } catch (error) {
@@ -101,7 +97,7 @@ export const toggleArchivatedPlan = async (req, res) => {
   const { id } = req.body;
 
   try {
-    const planSelected = await CelPlan.findById(id);
+    const planSelected = await InternetPlan.findById(id);
 
     if (!planSelected) {
       return res.status(404).json({ message: "Plano não encontrado" });
@@ -111,7 +107,7 @@ export const toggleArchivatedPlan = async (req, res) => {
 
     await planSelected.save();
 
-    const plans = await CelPlan.find();
+    const plans = await InternetPlan.find();
 
     return res.status(200).json(plans);
   } catch (error) {
@@ -120,15 +116,15 @@ export const toggleArchivatedPlan = async (req, res) => {
 };
 
 export const filterPlan = async (req, res) => {
-  const { cep, lines, cost, franchise, provider, planType, unlimitedApps } =
+  const { cep, provider, cost, download, upload, tecnology, hasWifi } =
     req.body;
 
   try {
-    const plans = await CelPlan.find({
-      lines,
+    const plans = await InternetPlan.find({
       cost: { $lt: cost + 1 },
-      franchise: { $lt: franchise + 1 },
-      archived: false,
+      download: { $lt: download + 1 },
+      upload: { $lt: upload + 1 },
+      hasWifi,
     });
 
     const allProviders = await Provider.find();
@@ -147,13 +143,7 @@ export const filterPlan = async (req, res) => {
     });
 
     const plansFiltered = plansProviderFilter.filter((plan) => {
-      if (planType.includes(plan.planType)) {
-        return plan.unlimitedApps.some((el) => {
-          if (unlimitedApps.includes(el)) {
-            return plan;
-          }
-        });
-      }
+      return tecnology.includes(plan.tecnology);
     });
 
     return res.status(200).json(plansFiltered);

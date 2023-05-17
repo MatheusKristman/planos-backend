@@ -9,6 +9,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import adminRoutes from "./routes/admin.js";
 import celPlanRoutes from "./routes/celPlan.js";
+import internetPlanRoutes from "./routes/internetPlan.js";
 import leadRoutes from "./routes/lead.js";
 import providerRoutes from "./routes/provider.js";
 import { createProvider, editProvider } from "./controllers/provider.js";
@@ -49,6 +50,7 @@ app.patch("/provider/edit", upload.single("providerLogo"), editProvider);
 // route without image
 app.use("/admin", multer().none(), adminRoutes);
 app.use("/plan/cel-plan", multer().none(), celPlanRoutes);
+app.use("/plan/internet-plan", multer().none(), internetPlanRoutes);
 app.use("/lead", multer().none(), leadRoutes);
 app.use("/provider", multer().none(), providerRoutes);
 

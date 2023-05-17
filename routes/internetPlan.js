@@ -1,11 +1,12 @@
 import express from "express";
+
 import {
-  editPlan,
-  createPlan,
-  filterPlan,
   getAllPlans,
+  createPlan,
+  editPlan,
   toggleArchivatedPlan,
-} from "../controllers/celPlan.js";
+  filterPlan,
+} from "../controllers/internetPlan.js";
 
 const router = express.Router();
 

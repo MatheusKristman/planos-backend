@@ -6,7 +6,7 @@ import {
   editPlan,
   toggleArchivatedPlan,
   filterPlan,
-} from "../controllers/telephonePlan.js";
+} from "../controllers/tvPlan.js";
 
 const router = express.Router();
 

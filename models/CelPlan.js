@@ -1,30 +1,22 @@
-import { Schema, model } from "mongoose";
-import dayjs from "dayjs";
+import { Schema, model } from 'mongoose';
+import dayjs from 'dayjs';
 
 const celPlanSchema = new Schema({
   provider: {
     type: Schema.Types.ObjectId,
-    ref: "Provider",
+    ref: 'Provider',
   },
   title: {
     type: String,
-    required: [true, "Titulo do plano é obrigatório!"],
+    required: [true, 'Titulo do plano é obrigatório!'],
   },
   cost: {
     type: Number,
-    required: [true, "Valor do plano é obrigatório!"],
-  },
-  period: {
-    type: String,
-    required: [true, "Periodo de pagamento do plano é obrigatório!"],
+    required: [true, 'Valor do plano é obrigatório!'],
   },
   franchise: {
-    type: Number,
-    required: [true, "Franquia de internet do plano é obrigatório!"],
-  },
-  lines: {
-    type: Number,
-    required: [true, "Numero de linhas do plano é obrigatório!"],
+    type: String,
+    required: [true, 'Franquia de internet do plano é obrigatório!'],
   },
   unlimitedApps: {
     type: Array,
@@ -32,19 +24,19 @@ const celPlanSchema = new Schema({
   },
   unlimitedCall: {
     type: Boolean,
-    required: [true, "Ligações ilimitadas do plano é obrigatório!"],
+    required: [true, 'Ligações ilimitadas do plano é obrigatório!'],
   },
   planType: {
     type: String,
-    required: [true, "Tipo do plano é obrigatório!"],
+    required: [true, 'Tipo do plano é obrigatório!'],
   },
   priority: {
     type: Number,
-    required: [true, "Numero da prioridade é obrigatório!"],
+    required: [true, 'Numero da prioridade é obrigatório!'],
   },
   description: {
     type: String,
-    required: [true, "descrição do plano é obrigatório!"],
+    required: [true, 'descrição do plano é obrigatório!'],
   },
   contacts: {
     type: Number,
@@ -52,7 +44,7 @@ const celPlanSchema = new Schema({
   },
   createdAt: {
     type: String,
-    default: dayjs().format("DD/MM/YYYY"),
+    default: dayjs().format('DD/MM/YYYY'),
   },
   archived: {
     type: Boolean,
@@ -60,6 +52,6 @@ const celPlanSchema = new Schema({
   },
 });
 
-const CelPlan = model("CelPlan", celPlanSchema);
+const CelPlan = model('CelPlan', celPlanSchema);
 
 export default CelPlan;

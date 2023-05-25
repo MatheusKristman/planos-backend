@@ -10,8 +10,8 @@ import { fileURLToPath } from "url";
 import adminRoutes from "./routes/admin.js";
 import celPlanRoutes from "./routes/celPlan.js";
 import internetPlanRoutes from "./routes/internetPlan.js";
-import telephonePlanRoutes from "./routes/telephonePlan.js";
-import leadRoutes from "./routes/lead.js";
+import tvPlanRoutes from "./routes/tvPlan.js";
+import clientPFRoutes from "./routes/clientPF.js";
 import providerRoutes from "./routes/provider.js";
 import { createProvider, editProvider } from "./controllers/provider.js";
 
@@ -52,8 +52,8 @@ app.patch("/provider/edit", upload.single("providerLogo"), editProvider);
 app.use("/admin", multer().none(), adminRoutes);
 app.use("/plan/cel-plan", multer().none(), celPlanRoutes);
 app.use("/plan/internet-plan", multer().none(), internetPlanRoutes);
-app.use("/plan/telephone-plan", multer().none(), telephonePlanRoutes);
-app.use("/lead", multer().none(), leadRoutes);
+app.use("/plan/tv-plan", multer().none(), tvPlanRoutes);
+app.use("/client-pf", multer().none(), clientPFRoutes);
 app.use("/provider", multer().none(), providerRoutes);
 
 // Mongoose Setup

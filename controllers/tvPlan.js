@@ -1,41 +1,30 @@
 import Provider from '../models/Provider.js';
-import CelPlan from '../models/CelPlan.js';
+import TVPlan from '../models/TvPlan.js';
 
 export const createPlan = async (req, res) => {
-  const {
-    providerId,
-    title,
-    cost,
-    franchise,
-    unlimitedApps,
-    unlimitedCall,
-    planType,
-    priority,
-    description,
-  } = req.body;
-
   try {
-    const planAlreadyExists = await CelPlan.findOne({ title });
+    const planAlreadyExists = await TVPlan.findOne({ title: req.body.title });
 
     if (planAlreadyExists) {
       return res.status(405).json({ message: 'Plano já existe' });
     }
 
-    const newPlan = new CelPlan({
-      provider: providerId,
-      title,
-      cost,
-      franchise,
-      unlimitedApps,
-      unlimitedCall,
-      planType,
-      priority,
-      description,
+    const newPlan = await TVPlan.create({
+      provider: req.body.providerId,
+      title: req.body.title,
+      cost: req.body.cost,
+      afterCost: req.body.afterCost || null,
+      periodToChangeCost: req.body.periodToChangeCost || null,
+      installationCost: req.body.installationCost,
+      devicesQuant: req.body.devicesQuant,
+      benefits: req.body.benefits || null,
+      priority: req.body.priority,
+      description: req.body.description,
     });
 
     await newPlan.save();
 
-    const plans = await CelPlan.find();
+    const plans = await TVPlan.find();
 
     return res.status(200).json(plans);
   } catch (error) {
@@ -44,34 +33,23 @@ export const createPlan = async (req, res) => {
 };
 
 export const editPlan = async (req, res) => {
-  const {
-    id,
-    title,
-    cost,
-    franchise,
-    unlimitedApps,
-    unlimitedCall,
-    planType,
-    priority,
-    description,
-  } = req.body;
-
   try {
-    await CelPlan.findOneAndUpdate(
-      { _id: id },
+    const planSelected = await TVPlan.findOneAndUpdate(
+      { _id: req.body.providerId },
       {
-        title,
-        cost,
-        franchise,
-        unlimitedApps,
-        unlimitedCall,
-        planType,
-        priority,
-        description,
+        title: req.body.title,
+        cost: req.body.cost,
+        afterCost: req.body.afterCost,
+        periodToChangeCost: req.body.periodToChangeCost,
+        installationCost: req.body.installationCost,
+        devicesQuant: req.body.devicesQuant,
+        benefits: req.body.benefits,
+        priority: req.body.priority,
+        description: req.body.description,
       }
     );
 
-    const plans = await CelPlan.find();
+    const plans = await TVPlan.find();
 
     return res.status(200).json(plans);
   } catch (error) {
@@ -81,7 +59,7 @@ export const editPlan = async (req, res) => {
 
 export const getAllPlans = async (req, res) => {
   try {
-    const plans = await CelPlan.find();
+    const plans = await TVPlan.find();
 
     return res.status(200).json(plans);
   } catch (error) {
@@ -93,7 +71,7 @@ export const toggleArchivatedPlan = async (req, res) => {
   const { id } = req.body;
 
   try {
-    const planSelected = await CelPlan.findById(id);
+    const planSelected = await TVPlan.findById(id);
 
     if (!planSelected) {
       return res.status(404).json({ message: 'Plano não encontrado' });
@@ -103,7 +81,7 @@ export const toggleArchivatedPlan = async (req, res) => {
 
     await planSelected.save();
 
-    const plans = await CelPlan.find();
+    const plans = await TVPlan.find();
 
     return res.status(200).json(plans);
   } catch (error) {
@@ -112,11 +90,12 @@ export const toggleArchivatedPlan = async (req, res) => {
 };
 
 export const filterPlan = async (req, res) => {
-  const { cep, cost, franchise, provider, planType, unlimitedApps } = req.body;
+  const { cep, provider, cost, devicesQuant, benefits } = req.body;
 
   try {
-    const plans = await CelPlan.find({
+    const plans = await TVPlan.find({
       cost: { $lt: cost + 1 },
+      devicesQuant,
       archived: false,
     });
 
@@ -128,29 +107,18 @@ export const filterPlan = async (req, res) => {
       );
     });
 
-    const planWithFranchiseFiltered = plans.filter((plan) => {
-      if (
-        parseInt(plan.franchise.substring(0, plan.franchise.length - 2)) <
-        parseInt(franchise.substring(0, franchise.length - 2))
-      ) {
-        return plan;
-      }
-    });
-
-    const plansProviderFilter = planWithFranchiseFiltered.filter((plan) => {
+    const plansProviderFiltered = plans.filter((plan) => {
       return providerFiltered.some((prov) => {
         return prov._id.equals(plan.provider);
       });
     });
 
-    const plansFiltered = plansProviderFilter.filter((plan) => {
-      if (planType.includes(plan.planType)) {
-        return plan.unlimitedApps.some((el) => {
-          if (unlimitedApps.includes(el)) {
-            return plan;
-          }
-        });
-      }
+    const plansFiltered = plansProviderFiltered.filter((plan) => {
+      return plan.benefits.some((el) => {
+        if (benefits.includes(el)) {
+          return plan;
+        }
+      });
     });
 
     return res.status(200).json(plansFiltered);

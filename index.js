@@ -11,6 +11,7 @@ import adminRoutes from "./routes/admin.js";
 import celPlanRoutes from "./routes/celPlan.js";
 import internetPlanRoutes from "./routes/internetPlan.js";
 import tvPlanRoutes from "./routes/tvPlan.js";
+import allPlansRoutes from "./routes/allPlans.js";
 import clientPFRoutes from "./routes/clientPF.js";
 import providerRoutes from "./routes/provider.js";
 import { createProvider, editProvider } from "./controllers/provider.js";
@@ -53,6 +54,7 @@ app.use("/admin", multer().none(), adminRoutes);
 app.use("/plan/cel-plan", multer().none(), celPlanRoutes);
 app.use("/plan/internet-plan", multer().none(), internetPlanRoutes);
 app.use("/plan/tv-plan", multer().none(), tvPlanRoutes);
+app.use("/plan/all-plans", multer().none(), allPlansRoutes);
 app.use("/client-pf", multer().none(), clientPFRoutes);
 app.use("/provider", multer().none(), providerRoutes);
 

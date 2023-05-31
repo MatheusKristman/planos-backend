@@ -4,6 +4,7 @@ import TVPlan from '../models/TvPlan.js';
 export const createPlan = async (req, res) => {
   try {
     const planAlreadyExists = await TVPlan.findOne({ title: req.body.title });
+    const provider = await Provider.findById(req.body.providerId);
 
     if (planAlreadyExists) {
       return res.status(405).json({ message: 'Plano já existe' });
@@ -11,6 +12,7 @@ export const createPlan = async (req, res) => {
 
     const newPlan = await TVPlan.create({
       provider: req.body.providerId,
+      providerIcon: provider.providerLogo,
       title: req.body.title,
       cost: req.body.cost,
       afterCost: req.body.afterCost || null,

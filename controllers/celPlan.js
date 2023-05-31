@@ -16,6 +16,7 @@ export const createPlan = async (req, res) => {
 
   try {
     const planAlreadyExists = await CelPlan.findOne({ title });
+    const provider = await Provider.findById(providerId);
 
     if (planAlreadyExists) {
       return res.status(405).json({ message: 'Plano já existe' });
@@ -23,6 +24,7 @@ export const createPlan = async (req, res) => {
 
     const newPlan = new CelPlan({
       provider: providerId,
+      providerIcon: provider.providerLogo,
       title,
       cost,
       franchise,

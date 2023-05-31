@@ -6,6 +6,10 @@ const internetPlanSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Provider',
   },
+  providerIcon: {
+    type: String,
+    required: [true, 'Icone da operadora é obrigatório'],
+  },
   title: {
     type: String,
     required: [true, 'Titulo do plano é obrigatório!'],

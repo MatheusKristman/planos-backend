@@ -1,14 +1,14 @@
-import { Schema, model } from 'mongoose';
-import dayjs from 'dayjs';
+import { Schema, model } from "mongoose";
+import dayjs from "dayjs";
 
 const tvPlanSchema = new Schema({
   provider: {
     type: Schema.Types.ObjectId,
-    ref: 'Provider',
+    ref: "Provider",
   },
   providerIcon: {
     type: String,
-    required: [true, 'Icone da operadora é obrigatório'],
+    required: [true, "Icone da operadora é obrigatório"],
   },
   title: {
     type: String,
@@ -52,14 +52,21 @@ const tvPlanSchema = new Schema({
   },
   createdAt: {
     type: String,
-    default: dayjs().format('DD/MM/YYYY'),
+    default: dayjs().format("DD/MM/YYYY"),
   },
   archived: {
     type: Boolean,
     default: false,
   },
+  archivedAt: {
+    type: String,
+  },
+  category: {
+    type: String,
+    default: "TV",
+  },
 });
 
-const TVPlan = model('TVPlan', tvPlanSchema);
+const TVPlan = model("TVPlan", tvPlanSchema);
 
 export default TVPlan;

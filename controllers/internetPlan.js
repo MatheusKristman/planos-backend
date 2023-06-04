@@ -1,5 +1,8 @@
-import Provider from '../models/Provider.js';
-import InternetPlan from '../models/InternetPlan.js';
+import Provider from "../models/Provider.js";
+import InternetPlan from "../models/InternetPlan.js";
+import CelPlan from "../models/CelPlan.js";
+import TVPlan from "../models/TvPlan.js";
+import dayjs from "dayjs";
 
 export const createPlan = async (req, res) => {
   const {
@@ -10,19 +13,21 @@ export const createPlan = async (req, res) => {
     download,
     upload,
     franchiseLimit,
-    tecnology,
+    technology,
     hasWifi,
     benefits,
     priority,
     description,
   } = req.body;
 
+  console.log(req.body);
+
   try {
     const planAlreadyExists = await InternetPlan.findOne({ title });
     const provider = await Provider.findById(providerId);
 
     if (planAlreadyExists) {
-      return res.status(405).json({ message: 'Plano já existe' });
+      return res.status(405).json({ message: "Plano já existe" });
     }
 
     const newPlan = new InternetPlan({
@@ -34,7 +39,7 @@ export const createPlan = async (req, res) => {
       download,
       upload,
       franchiseLimit,
-      tecnology,
+      technology,
       hasWifi,
       benefits,
       priority,
@@ -43,9 +48,17 @@ export const createPlan = async (req, res) => {
 
     await newPlan.save();
 
-    const plans = await InternetPlan.find();
+    const updatedInternetPlans = await InternetPlan.find();
+    const updatedCelPlans = await CelPlan.find();
+    const updatedTvPlans = await TVPlan.find();
 
-    return res.status(200).json(plans);
+    const allUpdatedPlans = [
+      ...updatedInternetPlans,
+      ...updatedCelPlans,
+      ...updatedTvPlans,
+    ];
+
+    return res.status(200).json(allUpdatedPlans);
   } catch (error) {
     return res.status(400).json({ message: error.message });
   }
@@ -60,12 +73,20 @@ export const editPlan = async (req, res) => {
     download,
     upload,
     franchiseLimit,
-    tecnology,
+    technology,
     hasWifi,
     benefits,
     priority,
     description,
   } = req.body;
+
+  const planAlreadyExists = await InternetPlan.findOne({ title });
+
+  if (planAlreadyExists) {
+    return res.status(405).json({ message: "Título desse plano já existe" });
+  }
+
+  console.log(req.body);
 
   try {
     await InternetPlan.findOneAndUpdate(
@@ -77,7 +98,7 @@ export const editPlan = async (req, res) => {
         download,
         upload,
         franchiseLimit,
-        tecnology,
+        technology,
         hasWifi,
         benefits,
         priority,
@@ -85,9 +106,17 @@ export const editPlan = async (req, res) => {
       }
     );
 
-    const plans = await InternetPlan.find();
+    const updatedInternetPlans = await InternetPlan.find();
+    const updatedCelPlans = await CelPlan.find();
+    const updatedTvPlans = await TVPlan.find();
 
-    return res.status(200).json(plans);
+    const allUpdatedPlans = [
+      ...updatedInternetPlans,
+      ...updatedCelPlans,
+      ...updatedTvPlans,
+    ];
+
+    return res.status(200).json(allUpdatedPlans);
   } catch (error) {
     return res.status(400).json({ message: error.message });
   }
@@ -110,23 +139,41 @@ export const toggleArchivatedPlan = async (req, res) => {
     const planSelected = await InternetPlan.findById(id);
 
     if (!planSelected) {
-      return res.status(404).json({ message: 'Plano não encontrado' });
+      return res.status(404).json({ message: "Plano não encontrado" });
     }
 
     planSelected.archived = !planSelected.archived;
+    planSelected.archivedAt = dayjs().format("DD/MM/YYYY");
 
     await planSelected.save();
 
-    const plans = await InternetPlan.find();
+    const updatedInternetPlans = await InternetPlan.find();
+    const updatedCelPlans = await CelPlan.find();
+    const updatedTvPlans = await TVPlan.find();
 
-    return res.status(200).json(plans);
+    const allUpdatedPlans = [
+      ...updatedInternetPlans,
+      ...updatedCelPlans,
+      ...updatedTvPlans,
+    ];
+
+    return res.status(200).json(allUpdatedPlans);
   } catch (error) {
     return res.status(400).json({ message: error.message });
   }
 };
 
 export const filterPlan = async (req, res) => {
-  const { cep, provider, cost, download, upload, tecnology, hasWifi, benefits } = req.body;
+  const {
+    cep,
+    provider,
+    cost,
+    download,
+    upload,
+    technology,
+    hasWifi,
+    benefits,
+  } = req.body;
 
   try {
     const plans = await InternetPlan.find({
@@ -150,18 +197,21 @@ export const filterPlan = async (req, res) => {
 
     const providerFiltered = allProviders.filter((providerFilter) => {
       return (
-        provider.includes(providerFilter.providerName) && providerFilter.locations.includes(cep)
+        provider.includes(providerFilter.providerName) &&
+        providerFilter.locations.includes(cep)
       );
     });
 
-    const plansProviderFilter = plansDownloadAndUploadFiltered.filter((plan) => {
-      return providerFiltered.some((prov) => {
-        return prov._id.equals(plan.provider);
-      });
-    });
+    const plansProviderFilter = plansDownloadAndUploadFiltered.filter(
+      (plan) => {
+        return providerFiltered.some((prov) => {
+          return prov._id.equals(plan.provider);
+        });
+      }
+    );
 
     const plansFiltered = plansProviderFilter.filter((plan) => {
-      if (tecnology.includes(plan.tecnology)) {
+      if (technology.includes(plan.technology)) {
         return plan.benefits.some((el) => {
           if (benefits.includes(el)) {
             return plan;
@@ -171,6 +221,28 @@ export const filterPlan = async (req, res) => {
     });
 
     return res.status(200).json(plansFiltered);
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+};
+
+export const deletePlan = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    await InternetPlan.findOneAndDelete({ _id: id });
+
+    const updatedCelPlans = await CelPlan.find();
+    const updatedInternetPlans = await InternetPlan.find();
+    const updatedTvPlans = await TVPlan.find();
+
+    const allUpdatedPlans = [
+      ...updatedInternetPlans,
+      ...updatedCelPlans,
+      ...updatedTvPlans,
+    ];
+
+    return res.status(200).json(allUpdatedPlans);
   } catch (error) {
     return res.status(400).json({ message: error.message });
   }

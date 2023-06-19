@@ -126,7 +126,7 @@ export const toggleArchivatedPlan = async (req, res) => {
 };
 
 export const filterPlan = async (req, res) => {
-  const { cep, provider, cost, devicesQuant, benefits } = req.body;
+  const { cep, provider, cost, devicesQuant } = req.body;
 
   try {
     const plans = await TVPlan.find({
@@ -138,6 +138,10 @@ export const filterPlan = async (req, res) => {
     const allProviders = await Provider.find();
 
     const providerFiltered = allProviders.filter((providerFilter) => {
+      if (provider?.length === 0 && providerFilter.locations.includes(cep)) {
+        return providerFilter;
+      }
+
       return (
         provider.includes(providerFilter.providerName) &&
         providerFilter.locations.includes(cep)
@@ -151,11 +155,7 @@ export const filterPlan = async (req, res) => {
     });
 
     const plansFiltered = plansProviderFiltered.filter((plan) => {
-      return plan.benefits.some((el) => {
-        if (benefits.includes(el)) {
-          return plan;
-        }
-      });
+      return plan;
     });
 
     return res.status(200).json(plansFiltered);

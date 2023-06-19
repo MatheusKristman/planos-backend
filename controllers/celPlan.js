@@ -148,7 +148,7 @@ export const toggleArchivatedPlan = async (req, res) => {
 };
 
 export const filterPlan = async (req, res) => {
-  const { cep, cost, franchise, provider, planType, unlimitedApps } = req.body;
+  const { cep, cost, franchise, provider, planType } = req.body;
 
   try {
     const plans = await CelPlan.find({
@@ -159,6 +159,10 @@ export const filterPlan = async (req, res) => {
     const allProviders = await Provider.find();
 
     const providerFiltered = allProviders.filter((providerFilter) => {
+      if (provider?.length === 0 && providerFilter.locations.includes(cep)) {
+        return providerFilter;
+      }
+
       return (
         provider.includes(providerFilter.providerName) &&
         providerFilter.locations.includes(cep)
@@ -167,11 +171,32 @@ export const filterPlan = async (req, res) => {
 
     const planWithFranchiseFiltered = plans.filter((plan) => {
       if (
-        parseInt(plan.franchise.substring(0, plan.franchise.length - 2)) <
-        parseInt(franchise.substring(0, franchise.length - 2))
+        parseInt(franchise.substring(0, franchise.length - 2)) <= 300 &&
+        plan.franchise.substring(
+          plan.franchise.length - 2,
+          plan.franchise.length
+        ) === "GB" &&
+        parseInt(plan.franchise.substring(0, plan.franchise.length - 2)) <=
+          parseInt(franchise.substring(0, franchise.length - 2))
       ) {
         return plan;
       }
+
+      if (
+        parseInt(franchise.substring(0, franchise.length - 2)) <= 300 &&
+        plan.franchise.substring(
+          plan.franchise.length - 2,
+          plan.franchise.length
+        ) === "MB" &&
+        parseInt(plan.franchise.substring(0, plan.franchise.length - 2)) <=
+          parseInt(franchise.substring(0, franchise.length - 2))
+      )
+        if (
+          parseInt(plan.franchise.substring(0, plan.franchise.length - 2)) <=
+          parseInt(franchise.substring(0, franchise.length - 2))
+        ) {
+          return plan;
+        }
     });
 
     const plansProviderFilter = planWithFranchiseFiltered.filter((plan) => {
@@ -181,12 +206,12 @@ export const filterPlan = async (req, res) => {
     });
 
     const plansFiltered = plansProviderFilter.filter((plan) => {
+      if (planType.length === 0) {
+        return plan;
+      }
+
       if (planType.includes(plan.planType)) {
-        return plan.unlimitedApps.some((el) => {
-          if (unlimitedApps.includes(el)) {
-            return plan;
-          }
-        });
+        return plan;
       }
     });
 

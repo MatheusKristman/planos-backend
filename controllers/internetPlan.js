@@ -164,30 +164,42 @@ export const toggleArchivatedPlan = async (req, res) => {
 };
 
 export const filterPlan = async (req, res) => {
-  const {
-    cep,
-    provider,
-    cost,
-    download,
-    upload,
-    technology,
-    hasWifi,
-    benefits,
-  } = req.body;
+  const { cep, provider, cost, download, technology } = req.body;
 
   try {
     const plans = await InternetPlan.find({
       cost: { $lt: cost + 1 },
-      hasWifi,
       archived: false,
     });
 
-    const plansDownloadAndUploadFiltered = plans.filter((plan) => {
+    const plansDownloadFiltered = plans.filter((plan) => {
+      if (
+        parseInt(download.substring(0, download.length - 2)) > 500 &&
+        plan.download.substring(
+          plan.download.length - 2,
+          plan.download.length
+        ) === "GB" &&
+        parseInt(plan.download.substring(0, plan.download.length - 2)) <
+          parseInt(download.substring(0, download.length - 2))
+      ) {
+        return plan;
+      }
+
+      if (
+        parseInt(download.substring(0, download.length - 2)) > 500 &&
+        plan.download.substring(
+          plan.download.length - 2,
+          plan.download.length
+        ) === "MB" &&
+        parseInt(plan.download.substring(0, plan.download.length - 2)) <
+          parseInt(download.substring(0, download.length - 2))
+      ) {
+        return plan;
+      }
+
       if (
         parseInt(plan.download.substring(0, plan.download.length - 2)) <
-          parseInt(download.substring(0, download.length - 2)) &&
-        parseInt(plan.upload.substring(0, plan.upload.length - 2)) <
-          parseInt(upload.substring(0, upload.length - 2))
+        parseInt(download.substring(0, download.length - 2))
       ) {
         return plan;
       }
@@ -196,27 +208,29 @@ export const filterPlan = async (req, res) => {
     const allProviders = await Provider.find();
 
     const providerFiltered = allProviders.filter((providerFilter) => {
+      if (provider?.length === 0 && providerFilter.locations.includes(cep)) {
+        return providerFilter;
+      }
+
       return (
         provider.includes(providerFilter.providerName) &&
         providerFilter.locations.includes(cep)
       );
     });
 
-    const plansProviderFilter = plansDownloadAndUploadFiltered.filter(
-      (plan) => {
-        return providerFiltered.some((prov) => {
-          return prov._id.equals(plan.provider);
-        });
-      }
-    );
+    const plansProviderFilter = plansDownloadFiltered.filter((plan) => {
+      return providerFiltered.some((prov) => {
+        return prov._id.equals(plan.provider);
+      });
+    });
 
     const plansFiltered = plansProviderFilter.filter((plan) => {
+      if (technology.length === 0) {
+        return plan;
+      }
+
       if (technology.includes(plan.technology)) {
-        return plan.benefits.some((el) => {
-          if (benefits.includes(el)) {
-            return plan;
-          }
-        });
+        return plan;
       }
     });
 

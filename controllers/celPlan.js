@@ -19,7 +19,17 @@ export const createPlan = async (req, res) => {
 
   try {
     const planAlreadyExists = await CelPlan.findOne({ title });
-    const provider = await Provider.findById(providerId);
+    const provider = await Provider.findOneAndUpdate(
+      { _id: providerId },
+      {
+        $inc: {
+          plansQuant: 1,
+        },
+      },
+      {
+        new: true,
+      }
+    );
 
     if (planAlreadyExists) {
       return res.status(405).json({ message: "Plano já existe" });
@@ -68,12 +78,6 @@ export const editPlan = async (req, res) => {
     priority,
     description,
   } = req.body;
-
-  const planAlreadyExists = await CelPlan.findOne({ title });
-
-  if (planAlreadyExists) {
-    return res.status(405).json({ message: "Plano já existe" });
-  }
 
   try {
     await CelPlan.findOneAndUpdate(
@@ -224,9 +228,20 @@ export const filterPlan = async (req, res) => {
 export const deletePlan = async (req, res) => {
   const { id } = req.params;
 
-  console.log(id);
-
   try {
+    const planSelected = await CelPlan.findById(id);
+
+    await Provider.findOneAndUpdate(
+      {
+        _id: planSelected.provider,
+      },
+      {
+        $inc: {
+          plansQuant: -1,
+        },
+      }
+    );
+
     await CelPlan.findOneAndDelete({ _id: id });
 
     const updatedCelPlans = await CelPlan.find();

@@ -3,6 +3,7 @@ import InternetPlan from "../models/InternetPlan.js";
 import CelPlan from "../models/CelPlan.js";
 import TVPlan from "../models/TvPlan.js";
 import dayjs from "dayjs";
+import { model } from "mongoose";
 
 export const createPlan = async (req, res) => {
   const {
@@ -24,7 +25,17 @@ export const createPlan = async (req, res) => {
 
   try {
     const planAlreadyExists = await InternetPlan.findOne({ title });
-    const provider = await Provider.findById(providerId);
+    const provider = await Provider.findOneAndUpdate(
+      { _id: providerId },
+      {
+        $inc: {
+          plansQuant: 1,
+        },
+      },
+      {
+        new: true,
+      }
+    );
 
     if (planAlreadyExists) {
       return res.status(405).json({ message: "Plano já existe" });
@@ -79,12 +90,6 @@ export const editPlan = async (req, res) => {
     priority,
     description,
   } = req.body;
-
-  const planAlreadyExists = await InternetPlan.findOne({ title });
-
-  if (planAlreadyExists) {
-    return res.status(405).json({ message: "Título desse plano já existe" });
-  }
 
   console.log(req.body);
 
@@ -179,7 +184,7 @@ export const filterPlan = async (req, res) => {
           plan.download.length - 2,
           plan.download.length
         ) === "GB" &&
-        parseInt(plan.download.substring(0, plan.download.length - 2)) <
+        parseInt(plan.download.substring(0, plan.download.length - 2)) <=
           parseInt(download.substring(0, download.length - 2))
       ) {
         return plan;
@@ -191,14 +196,14 @@ export const filterPlan = async (req, res) => {
           plan.download.length - 2,
           plan.download.length
         ) === "MB" &&
-        parseInt(plan.download.substring(0, plan.download.length - 2)) <
+        parseInt(plan.download.substring(0, plan.download.length - 2)) <=
           parseInt(download.substring(0, download.length - 2))
       ) {
         return plan;
       }
 
       if (
-        parseInt(plan.download.substring(0, plan.download.length - 2)) <
+        parseInt(plan.download.substring(0, plan.download.length - 2)) <=
         parseInt(download.substring(0, download.length - 2))
       ) {
         return plan;
@@ -244,6 +249,19 @@ export const deletePlan = async (req, res) => {
   const { id } = req.params;
 
   try {
+    const planSelected = await InternetPlan.findById(id);
+
+    await Provider.findOneAndUpdate(
+      {
+        _id: planSelected.provider,
+      },
+      {
+        $inc: {
+          plansQuant: -1,
+        },
+      }
+    );
+
     await InternetPlan.findOneAndDelete({ _id: id });
 
     const updatedCelPlans = await CelPlan.find();

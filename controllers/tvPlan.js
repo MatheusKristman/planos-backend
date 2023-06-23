@@ -7,7 +7,17 @@ import dayjs from "dayjs";
 export const createPlan = async (req, res) => {
   try {
     const planAlreadyExists = await TVPlan.findOne({ title: req.body.title });
-    const provider = await Provider.findById(req.body.providerId);
+    const provider = await Provider.findOneAndUpdate(
+      { _id: req.body.providerId },
+      {
+        $inc: {
+          plansQuant: 1,
+        },
+      },
+      {
+        new: true,
+      }
+    );
 
     if (planAlreadyExists) {
       return res.status(405).json({ message: "Plano já existe" });
@@ -47,12 +57,6 @@ export const createPlan = async (req, res) => {
 
 export const editPlan = async (req, res) => {
   try {
-    const planAlreadyExists = await TVPlan.findOne({ title: req.body.title });
-
-    if (planAlreadyExists) {
-      return res.status(405).json({ message: "Plano já existe" });
-    }
-
     const planSelected = await TVPlan.findOneAndUpdate(
       { _id: req.body.id },
       {
@@ -168,6 +172,19 @@ export const deletePlan = async (req, res) => {
   const { id } = req.params;
 
   try {
+    const planSelected = await TVPlan.findById(id);
+
+    await Provider.findOneAndUpdate(
+      {
+        _id: planSelected.provider,
+      },
+      {
+        $inc: {
+          plansQuant: -1,
+        },
+      }
+    );
+
     await TVPlan.findOneAndDelete({ _id: id });
 
     const updatedCelPlans = await CelPlan.find();

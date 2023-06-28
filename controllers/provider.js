@@ -1,4 +1,7 @@
 import Provider from "../models/Provider.js";
+import InternetPlan from "../models/InternetPlan.js";
+import CelPlan from "../models/CelPlan.js";
+import TVPlan from "../models/TvPlan.js";
 
 export const createProvider = async (req, res) => {
   const { providerName, locations } = req.body;
@@ -38,6 +41,8 @@ export const editProvider = async (req, res) => {
 
     const providerSelected = await Provider.findById(providerId);
 
+    console.log(providerSelected);
+
     providerSelected.providerLogo = req.file.filename;
     providerSelected.providerName = providerName;
     providerSelected.locations = locations;
@@ -54,6 +59,23 @@ export const editProvider = async (req, res) => {
 
 export const getAllProviders = async (req, res) => {
   try {
+    const providers = await Provider.find();
+
+    return res.status(200).json(providers);
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+};
+
+export const deleteProvider = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    await InternetPlan.deleteMany({ provider: id });
+    await CelPlan.deleteMany({ provider: id });
+    await TVPlan.deleteMany({ provider: id });
+    await Provider.findByIdAndDelete(id);
+
     const providers = await Provider.find();
 
     return res.status(200).json(providers);

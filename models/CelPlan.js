@@ -39,7 +39,7 @@ const celPlanSchema = new Schema({
     required: [true, "Numero da prioridade é obrigatório!"],
   },
   description: {
-    type: String,
+    type: Array,
     required: [true, "descrição do plano é obrigatório!"],
   },
   contacts: {

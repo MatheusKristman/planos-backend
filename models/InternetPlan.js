@@ -51,7 +51,7 @@ const internetPlanSchema = new Schema({
     required: [true, "Numero da prioridade é obrigatório!"],
   },
   description: {
-    type: String,
+    type: Array,
     required: [true, "Descrição do plano é obrigatório!"],
   },
   contacts: {

@@ -14,6 +14,7 @@ import tvPlanRoutes from "./routes/tvPlan.js";
 import allPlansRoutes from "./routes/allPlans.js";
 import clientPFRoutes from "./routes/clientPF.js";
 import providerRoutes from "./routes/provider.js";
+import emailRoutes from "./routes/email.js";
 import { createProvider, editProvider } from "./controllers/provider.js";
 
 // Config
@@ -57,6 +58,7 @@ app.use("/plan/tv-plan", multer().none(), tvPlanRoutes);
 app.use("/plan/all-plans", multer().none(), allPlansRoutes);
 app.use("/client-pf", multer().none(), clientPFRoutes);
 app.use("/provider", multer().none(), providerRoutes);
+app.use("/email", multer().none(), emailRoutes);
 
 // Mongoose Setup
 

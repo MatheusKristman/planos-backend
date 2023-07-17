@@ -35,7 +35,11 @@ export const editProvider = async (req, res) => {
   try {
     const providerNameAlreadyTaken = await Provider.findOne({ providerName });
 
-    if (providerNameAlreadyTaken) {
+    console.log(providerNameAlreadyTaken._id);
+    console.log(providerId);
+
+    if (!providerNameAlreadyTaken._id.equals(providerId)) {
+      // verificar se o nome que achou tem o mesmo id
       return res.status(405).json({ message: "Nome já utilizado" });
     }
 
@@ -43,7 +47,10 @@ export const editProvider = async (req, res) => {
 
     console.log(providerSelected);
 
-    providerSelected.providerLogo = req.file.filename;
+    if (req.file) {
+      providerSelected.providerLogo = req.file.filename;
+    }
+
     providerSelected.providerName = providerName;
     providerSelected.locations = locations;
 

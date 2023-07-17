@@ -45,8 +45,6 @@ export const registerClient = async (req, res) => {
       plan: req.body.planId,
     });
 
-    console.log(req.body.planType);
-
     if (req.body.planType === "internetPlan") {
       await InternetPlan.findOneAndUpdate(
         { _id: req.body.planId },
@@ -54,7 +52,7 @@ export const registerClient = async (req, res) => {
           $inc: {
             contacts: 1,
           },
-        }
+        },
       );
     }
 
@@ -65,7 +63,7 @@ export const registerClient = async (req, res) => {
           $inc: {
             contacts: 1,
           },
-        }
+        },
       );
     }
 
@@ -76,7 +74,7 @@ export const registerClient = async (req, res) => {
           $inc: {
             contacts: 1,
           },
-        }
+        },
       );
     }
 

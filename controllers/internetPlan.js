@@ -21,8 +21,6 @@ export const createPlan = async (req, res) => {
     description,
   } = req.body;
 
-  console.log(req.body);
-
   try {
     const planAlreadyExists = await InternetPlan.findOne({ title });
     const provider = await Provider.findOneAndUpdate(
@@ -34,7 +32,7 @@ export const createPlan = async (req, res) => {
       },
       {
         new: true,
-      }
+      },
     );
 
     if (planAlreadyExists) {
@@ -91,8 +89,6 @@ export const editPlan = async (req, res) => {
     description,
   } = req.body;
 
-  console.log(req.body);
-
   try {
     await InternetPlan.findOneAndUpdate(
       { _id: id },
@@ -108,7 +104,7 @@ export const editPlan = async (req, res) => {
         benefits,
         priority,
         description,
-      }
+      },
     );
 
     const updatedInternetPlans = await InternetPlan.find();
@@ -182,7 +178,7 @@ export const filterPlan = async (req, res) => {
         parseInt(download.substring(0, download.length - 2)) > 500 &&
         plan.download.substring(
           plan.download.length - 2,
-          plan.download.length
+          plan.download.length,
         ) === "GB" &&
         parseInt(plan.download.substring(0, plan.download.length - 2)) <=
           parseInt(download.substring(0, download.length - 2))
@@ -194,7 +190,7 @@ export const filterPlan = async (req, res) => {
         parseInt(download.substring(0, download.length - 2)) > 500 &&
         plan.download.substring(
           plan.download.length - 2,
-          plan.download.length
+          plan.download.length,
         ) === "MB" &&
         parseInt(plan.download.substring(0, plan.download.length - 2)) <=
           parseInt(download.substring(0, download.length - 2))
@@ -259,7 +255,7 @@ export const deletePlan = async (req, res) => {
         $inc: {
           plansQuant: -1,
         },
-      }
+      },
     );
 
     await InternetPlan.findOneAndDelete({ _id: id });

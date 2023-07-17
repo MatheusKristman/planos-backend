@@ -35,17 +35,12 @@ export const editProvider = async (req, res) => {
   try {
     const providerNameAlreadyTaken = await Provider.findOne({ providerName });
 
-    console.log(providerNameAlreadyTaken._id);
-    console.log(providerId);
-
     if (!providerNameAlreadyTaken._id.equals(providerId)) {
       // verificar se o nome que achou tem o mesmo id
       return res.status(405).json({ message: "Nome já utilizado" });
     }
 
     const providerSelected = await Provider.findById(providerId);
-
-    console.log(providerSelected);
 
     if (req.file) {
       providerSelected.providerLogo = req.file.filename;

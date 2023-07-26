@@ -19,6 +19,11 @@ export const createPlan = async (req, res) => {
 
   try {
     const planAlreadyExists = await CelPlan.findOne({ title });
+
+    if (planAlreadyExists) {
+      return res.status(405).json({ message: "Plano já existe" });
+    }
+
     const provider = await Provider.findOneAndUpdate(
       { _id: providerId },
       {
@@ -28,12 +33,8 @@ export const createPlan = async (req, res) => {
       },
       {
         new: true,
-      }
+      },
     );
-
-    if (planAlreadyExists) {
-      return res.status(405).json({ message: "Plano já existe" });
-    }
 
     const newPlan = new CelPlan({
       provider: providerId,
@@ -54,11 +55,7 @@ export const createPlan = async (req, res) => {
     const updatedInternetPlans = await InternetPlan.find();
     const updatedTvPlans = await TVPlan.find();
 
-    const allUpdatedPlans = [
-      ...updatedInternetPlans,
-      ...updatedCelPlans,
-      ...updatedTvPlans,
-    ];
+    const allUpdatedPlans = [...updatedInternetPlans, ...updatedCelPlans, ...updatedTvPlans];
 
     return res.status(200).json(allUpdatedPlans);
   } catch (error) {
@@ -80,6 +77,14 @@ export const editPlan = async (req, res) => {
   } = req.body;
 
   try {
+    const planAlreadyExists = await CelPlan.findOne({ title });
+
+    if (planAlreadyExists) {
+      if (!planAlreadyExists._id.equals(id)) {
+        return res.status(405).json({ message: "Plano já existe" });
+      }
+    }
+
     await CelPlan.findOneAndUpdate(
       { _id: id },
       {
@@ -91,18 +96,14 @@ export const editPlan = async (req, res) => {
         planType,
         priority,
         description,
-      }
+      },
     );
 
     const updatedCelPlans = await CelPlan.find();
     const updatedInternetPlans = await InternetPlan.find();
     const updatedTvPlans = await TVPlan.find();
 
-    const allUpdatedPlans = [
-      ...updatedInternetPlans,
-      ...updatedCelPlans,
-      ...updatedTvPlans,
-    ];
+    const allUpdatedPlans = [...updatedInternetPlans, ...updatedCelPlans, ...updatedTvPlans];
 
     return res.status(200).json(allUpdatedPlans);
   } catch (error) {
@@ -139,11 +140,7 @@ export const toggleArchivatedPlan = async (req, res) => {
     const updatedInternetPlans = await InternetPlan.find();
     const updatedTvPlans = await TVPlan.find();
 
-    const allUpdatedPlans = [
-      ...updatedInternetPlans,
-      ...updatedCelPlans,
-      ...updatedTvPlans,
-    ];
+    const allUpdatedPlans = [...updatedInternetPlans, ...updatedCelPlans, ...updatedTvPlans];
 
     return res.status(200).json(allUpdatedPlans);
   } catch (error) {
@@ -168,18 +165,14 @@ export const filterPlan = async (req, res) => {
       }
 
       return (
-        provider.includes(providerFilter.providerName) &&
-        providerFilter.locations.includes(cep)
+        provider.includes(providerFilter.providerName) && providerFilter.locations.includes(cep)
       );
     });
 
     const planWithFranchiseFiltered = plans.filter((plan) => {
       if (
         parseInt(franchise.substring(0, franchise.length - 2)) <= 300 &&
-        plan.franchise.substring(
-          plan.franchise.length - 2,
-          plan.franchise.length
-        ) === "GB" &&
+        plan.franchise.substring(plan.franchise.length - 2, plan.franchise.length) === "GB" &&
         parseInt(plan.franchise.substring(0, plan.franchise.length - 2)) <=
           parseInt(franchise.substring(0, franchise.length - 2))
       ) {
@@ -188,10 +181,7 @@ export const filterPlan = async (req, res) => {
 
       if (
         parseInt(franchise.substring(0, franchise.length - 2)) <= 300 &&
-        plan.franchise.substring(
-          plan.franchise.length - 2,
-          plan.franchise.length
-        ) === "MB" &&
+        plan.franchise.substring(plan.franchise.length - 2, plan.franchise.length) === "MB" &&
         parseInt(plan.franchise.substring(0, plan.franchise.length - 2)) <=
           parseInt(franchise.substring(0, franchise.length - 2))
       )
@@ -239,7 +229,7 @@ export const deletePlan = async (req, res) => {
         $inc: {
           plansQuant: -1,
         },
-      }
+      },
     );
 
     await CelPlan.findOneAndDelete({ _id: id });
@@ -248,11 +238,7 @@ export const deletePlan = async (req, res) => {
     const updatedInternetPlans = await InternetPlan.find();
     const updatedTvPlans = await TVPlan.find();
 
-    const allUpdatedPlans = [
-      ...updatedInternetPlans,
-      ...updatedCelPlans,
-      ...updatedTvPlans,
-    ];
+    const allUpdatedPlans = [...updatedInternetPlans, ...updatedCelPlans, ...updatedTvPlans];
 
     return res.status(200).json(allUpdatedPlans);
   } catch (error) {

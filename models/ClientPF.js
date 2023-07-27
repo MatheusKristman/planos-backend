@@ -1,4 +1,5 @@
-import { Schema, model } from 'mongoose';
+import { Schema, model } from "mongoose";
+import dayjs from "dayjs";
 
 const clientPFSchema = new Schema({
   name: {
@@ -26,7 +27,7 @@ const clientPFSchema = new Schema({
   },
   tel2: {
     type: String,
-    default: '',
+    default: "",
   },
   state: {
     type: String,
@@ -50,7 +51,7 @@ const clientPFSchema = new Schema({
   },
   complement: {
     type: String,
-    default: '',
+    default: "",
   },
   paymentDate: {
     type: String,
@@ -62,19 +63,19 @@ const clientPFSchema = new Schema({
   },
   bank: {
     type: String,
-    default: '',
+    default: "",
   },
   agency: {
     type: String,
-    default: '',
+    default: "",
   },
   bankAccount: {
     type: String,
-    default: '',
+    default: "",
   },
   accountOwner: {
     type: String,
-    default: '',
+    default: "",
   },
   installationDate1: {
     type: String,
@@ -90,10 +91,18 @@ const clientPFSchema = new Schema({
   },
   plan: {
     type: Schema.Types.ObjectId,
-    ref: 'CelPlan' || 'InternetPlan' || 'TelephonePlan',
+    ref: "CelPlan" || "InternetPlan" || "TelephonePlan",
+  },
+  createdAt: {
+    type: String,
+    default: dayjs().format("DD/MM/YYYY"),
+  },
+  contacted: {
+    type: Boolean,
+    default: false,
   },
 });
 
-const ClientPF = model('ClientPF', clientPFSchema);
+const ClientPF = model("ClientPF", clientPFSchema);
 
 export default ClientPF;

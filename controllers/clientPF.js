@@ -95,3 +95,21 @@ export const getAllClients = async (req, res) => {
     return res.status(400).json({ message: error.message });
   }
 };
+
+export const toggleContacted = async (req, res) => {
+  const { id } = req.body;
+
+  try {
+    const clientSelected = await ClientPF.findOne({ _id: id });
+
+    clientSelected.contacted = !clientSelected.contacted;
+
+    await clientSelected.save();
+
+    const clientsUpdated = await ClientPF.find();
+
+    return res.status(200).json(clientsUpdated);
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+};

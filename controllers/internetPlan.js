@@ -177,8 +177,6 @@ export const toggleArchivatedPlan = async (req, res) => {
 export const filterPlan = async (req, res) => {
   const { cep, provider, cost, download, technology } = req.body;
 
-  //TODO check if error on cep filter
-
   try {
     const plans = await InternetPlan.find({
       cost: { $lt: cost + 1 },
@@ -230,6 +228,8 @@ export const filterPlan = async (req, res) => {
         providerFilter.locations.includes(cep)
       );
     });
+
+    console.log("providerFiltered: ", providerFiltered);
 
     const plansProviderFilter = plansDownloadFiltered.filter((plan) => {
       return providerFiltered.some((prov) => {

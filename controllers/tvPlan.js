@@ -16,7 +16,7 @@ export const createPlan = async (req, res) => {
       },
       {
         new: true,
-      }
+      },
     );
 
     if (planAlreadyExists) {
@@ -69,7 +69,7 @@ export const editPlan = async (req, res) => {
         benefits: req.body.benefits,
         priority: req.body.priority,
         description: req.body.description,
-      }
+      },
     );
 
     const updatedTvPlans = await TVPlan.find();
@@ -132,6 +132,7 @@ export const toggleArchivatedPlan = async (req, res) => {
 export const filterPlan = async (req, res) => {
   const { cep, provider, cost, devicesQuant } = req.body;
 
+  // TODO check if error on cep filter
   try {
     const plans = await TVPlan.find({
       cost: { $lt: cost + 1 },
@@ -182,7 +183,7 @@ export const deletePlan = async (req, res) => {
         $inc: {
           plansQuant: -1,
         },
-      }
+      },
     );
 
     await TVPlan.findOneAndDelete({ _id: id });

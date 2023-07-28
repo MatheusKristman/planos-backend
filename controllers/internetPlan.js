@@ -61,7 +61,11 @@ export const createPlan = async (req, res) => {
     const updatedCelPlans = await CelPlan.find();
     const updatedTvPlans = await TVPlan.find();
 
-    const allUpdatedPlans = [...updatedInternetPlans, ...updatedCelPlans, ...updatedTvPlans];
+    const allUpdatedPlans = [
+      ...updatedInternetPlans,
+      ...updatedCelPlans,
+      ...updatedTvPlans,
+    ];
 
     return res.status(200).json(allUpdatedPlans);
   } catch (error) {
@@ -117,7 +121,11 @@ export const editPlan = async (req, res) => {
     const updatedCelPlans = await CelPlan.find();
     const updatedTvPlans = await TVPlan.find();
 
-    const allUpdatedPlans = [...updatedInternetPlans, ...updatedCelPlans, ...updatedTvPlans];
+    const allUpdatedPlans = [
+      ...updatedInternetPlans,
+      ...updatedCelPlans,
+      ...updatedTvPlans,
+    ];
 
     return res.status(200).json(allUpdatedPlans);
   } catch (error) {
@@ -154,7 +162,11 @@ export const toggleArchivatedPlan = async (req, res) => {
     const updatedCelPlans = await CelPlan.find();
     const updatedTvPlans = await TVPlan.find();
 
-    const allUpdatedPlans = [...updatedInternetPlans, ...updatedCelPlans, ...updatedTvPlans];
+    const allUpdatedPlans = [
+      ...updatedInternetPlans,
+      ...updatedCelPlans,
+      ...updatedTvPlans,
+    ];
 
     return res.status(200).json(allUpdatedPlans);
   } catch (error) {
@@ -165,6 +177,8 @@ export const toggleArchivatedPlan = async (req, res) => {
 export const filterPlan = async (req, res) => {
   const { cep, provider, cost, download, technology } = req.body;
 
+  //TODO check if error on cep filter
+
   try {
     const plans = await InternetPlan.find({
       cost: { $lt: cost + 1 },
@@ -174,7 +188,10 @@ export const filterPlan = async (req, res) => {
     const plansDownloadFiltered = plans.filter((plan) => {
       if (
         parseInt(download.substring(0, download.length - 2)) > 500 &&
-        plan.download.substring(plan.download.length - 2, plan.download.length) === "GB" &&
+        plan.download.substring(
+          plan.download.length - 2,
+          plan.download.length,
+        ) === "GB" &&
         parseInt(plan.download.substring(0, plan.download.length - 2)) <=
           parseInt(download.substring(0, download.length - 2))
       ) {
@@ -183,7 +200,10 @@ export const filterPlan = async (req, res) => {
 
       if (
         parseInt(download.substring(0, download.length - 2)) > 500 &&
-        plan.download.substring(plan.download.length - 2, plan.download.length) === "MB" &&
+        plan.download.substring(
+          plan.download.length - 2,
+          plan.download.length,
+        ) === "MB" &&
         parseInt(plan.download.substring(0, plan.download.length - 2)) <=
           parseInt(download.substring(0, download.length - 2))
       ) {
@@ -206,7 +226,8 @@ export const filterPlan = async (req, res) => {
       }
 
       return (
-        provider.includes(providerFilter.providerName) && providerFilter.locations.includes(cep)
+        provider.includes(providerFilter.providerName) &&
+        providerFilter.locations.includes(cep)
       );
     });
 
@@ -255,7 +276,11 @@ export const deletePlan = async (req, res) => {
     const updatedInternetPlans = await InternetPlan.find();
     const updatedTvPlans = await TVPlan.find();
 
-    const allUpdatedPlans = [...updatedInternetPlans, ...updatedCelPlans, ...updatedTvPlans];
+    const allUpdatedPlans = [
+      ...updatedInternetPlans,
+      ...updatedCelPlans,
+      ...updatedTvPlans,
+    ];
 
     return res.status(200).json(allUpdatedPlans);
   } catch (error) {

@@ -210,7 +210,11 @@ export const filterPlan = async (req, res) => {
 
       if (
         parseInt(plan.download.substring(0, plan.download.length - 2)) <=
-        parseInt(download.substring(0, download.length - 2))
+          parseInt(download.substring(0, download.length - 2)) &&
+        plan.download.substring(
+          plan.download.length - 2,
+          plan.download.length,
+        ) === "MB"
       ) {
         return plan;
       }

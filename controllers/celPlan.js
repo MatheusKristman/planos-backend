@@ -55,7 +55,11 @@ export const createPlan = async (req, res) => {
     const updatedInternetPlans = await InternetPlan.find();
     const updatedTvPlans = await TVPlan.find();
 
-    const allUpdatedPlans = [...updatedInternetPlans, ...updatedCelPlans, ...updatedTvPlans];
+    const allUpdatedPlans = [
+      ...updatedInternetPlans,
+      ...updatedCelPlans,
+      ...updatedTvPlans,
+    ];
 
     return res.status(200).json(allUpdatedPlans);
   } catch (error) {
@@ -103,7 +107,11 @@ export const editPlan = async (req, res) => {
     const updatedInternetPlans = await InternetPlan.find();
     const updatedTvPlans = await TVPlan.find();
 
-    const allUpdatedPlans = [...updatedInternetPlans, ...updatedCelPlans, ...updatedTvPlans];
+    const allUpdatedPlans = [
+      ...updatedInternetPlans,
+      ...updatedCelPlans,
+      ...updatedTvPlans,
+    ];
 
     return res.status(200).json(allUpdatedPlans);
   } catch (error) {
@@ -122,7 +130,7 @@ export const getAllPlans = async (req, res) => {
 };
 
 export const toggleArchivatedPlan = async (req, res) => {
-  const { id } = req.body;
+  const { id, isAll } = req.body;
 
   try {
     const planSelected = await CelPlan.findById(id);
@@ -140,9 +148,17 @@ export const toggleArchivatedPlan = async (req, res) => {
     const updatedInternetPlans = await InternetPlan.find();
     const updatedTvPlans = await TVPlan.find();
 
-    const allUpdatedPlans = [...updatedInternetPlans, ...updatedCelPlans, ...updatedTvPlans];
+    const allUpdatedPlans = [
+      ...updatedInternetPlans,
+      ...updatedCelPlans,
+      ...updatedTvPlans,
+    ];
 
-    return res.status(200).json(allUpdatedPlans);
+    if (isAll) {
+      return res.status(200).json(allUpdatedPlans);
+    }
+
+    return res.status(200).json(updatedCelPlans);
   } catch (error) {
     return res.status(400).json({ message: error.message });
   }
@@ -165,14 +181,18 @@ export const filterPlan = async (req, res) => {
       }
 
       return (
-        provider.includes(providerFilter.providerName) && providerFilter.locations.includes(cep)
+        provider.includes(providerFilter.providerName) &&
+        providerFilter.locations.includes(cep)
       );
     });
 
     const planWithFranchiseFiltered = plans.filter((plan) => {
       if (
         parseInt(franchise.substring(0, franchise.length - 2)) <= 300 &&
-        plan.franchise.substring(plan.franchise.length - 2, plan.franchise.length) === "GB" &&
+        plan.franchise.substring(
+          plan.franchise.length - 2,
+          plan.franchise.length,
+        ) === "GB" &&
         parseInt(plan.franchise.substring(0, plan.franchise.length - 2)) <=
           parseInt(franchise.substring(0, franchise.length - 2))
       ) {
@@ -181,7 +201,10 @@ export const filterPlan = async (req, res) => {
 
       if (
         parseInt(franchise.substring(0, franchise.length - 2)) <= 300 &&
-        plan.franchise.substring(plan.franchise.length - 2, plan.franchise.length) === "MB" &&
+        plan.franchise.substring(
+          plan.franchise.length - 2,
+          plan.franchise.length,
+        ) === "MB" &&
         parseInt(plan.franchise.substring(0, plan.franchise.length - 2)) <=
           parseInt(franchise.substring(0, franchise.length - 2))
       )
@@ -216,7 +239,7 @@ export const filterPlan = async (req, res) => {
 };
 
 export const deletePlan = async (req, res) => {
-  const { id } = req.params;
+  const { id, isAll } = req.body;
 
   try {
     const planSelected = await CelPlan.findById(id);
@@ -238,9 +261,17 @@ export const deletePlan = async (req, res) => {
     const updatedInternetPlans = await InternetPlan.find();
     const updatedTvPlans = await TVPlan.find();
 
-    const allUpdatedPlans = [...updatedInternetPlans, ...updatedCelPlans, ...updatedTvPlans];
+    const allUpdatedPlans = [
+      ...updatedInternetPlans,
+      ...updatedCelPlans,
+      ...updatedTvPlans,
+    ];
 
-    return res.status(200).json(allUpdatedPlans);
+    if (isAll) {
+      return res.status(200).json(allUpdatedPlans);
+    }
+
+    return res.status(200).json(updatedCelPlans);
   } catch (error) {
     return res.status(400).json({ message: error.message });
   }

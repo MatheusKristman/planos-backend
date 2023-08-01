@@ -144,7 +144,7 @@ export const getAllPlans = async (req, res) => {
 };
 
 export const toggleArchivatedPlan = async (req, res) => {
-  const { id } = req.body;
+  const { id, isAll } = req.body;
 
   try {
     const planSelected = await InternetPlan.findById(id);
@@ -168,7 +168,11 @@ export const toggleArchivatedPlan = async (req, res) => {
       ...updatedTvPlans,
     ];
 
-    return res.status(200).json(allUpdatedPlans);
+    if (isAll) {
+      return res.status(200).json(allUpdatedPlans);
+    }
+
+    return res.status(200).json(updatedInternetPlans);
   } catch (error) {
     return res.status(400).json({ message: error.message });
   }
@@ -258,7 +262,7 @@ export const filterPlan = async (req, res) => {
 };
 
 export const deletePlan = async (req, res) => {
-  const { id } = req.params;
+  const { id, isAll } = req.body;
 
   try {
     const planSelected = await InternetPlan.findById(id);
@@ -286,7 +290,11 @@ export const deletePlan = async (req, res) => {
       ...updatedTvPlans,
     ];
 
-    return res.status(200).json(allUpdatedPlans);
+    if (isAll) {
+      return res.status(200).json(allUpdatedPlans);
+    }
+
+    return res.status(200).json(updatedInternetPlans);
   } catch (error) {
     return res.status(400).json({ message: error.message });
   }

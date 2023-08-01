@@ -15,6 +15,6 @@ router.post("/new", createPlan);
 router.put("/edit", editPlan);
 router.put("/archive", toggleArchivatedPlan);
 router.post("/filter", filterPlan);
-router.delete("/delete/:id", deletePlan);
+router.put("/delete", deletePlan);
 
 export default router;
